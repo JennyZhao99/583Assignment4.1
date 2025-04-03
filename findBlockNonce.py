@@ -48,9 +48,9 @@ def mine_block(k, prev_hash, transactions):
         nonce += 1
 
         # Safety check to prevent infinite loops (though unlikely with reasonable k)
-        if nonce > 2**(k+10):  # Arbitrary large number based on difficulty
+        """if nonce > 2**(k+10):  # Arbitrary large number based on difficulty
             print("Warning: Could not find valid nonce after many attempts")
-            return b'\x00'
+            return b'\x00'"""
 
     #assert isinstance(nonce, bytes), 'nonce should be of type bytes'
     #return nonce
