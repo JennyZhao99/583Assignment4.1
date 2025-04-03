@@ -19,9 +19,41 @@ def mine_block(k, prev_hash, transactions):
         return b'\x00'
 
     # TODO your code to find a nonce here
+    # Prepare the data to be hashed (prev_hash + all transactions)
+    data = prev_hash
+    for tx in transactions:
+        data += tx.encode('utf-8')
+    
+    # Start with nonce = 0 and increment until it find a valid one
+    nonce = 0
+    while True:
+        # Convert nonce to bytes (little endian)
+        nonce_bytes = nonce.to_bytes((nonce.bit_length() + 7) // 8, 'little') or b'\x00'
+        
+        # Compute the hash
+        h = hashlib.sha256(data + nonce_bytes)
+        hash_bytes = h.digest()  # Get the hash as bytes
+        
+        # Convert hash to binary string and check trailing zeros
+        binary_hash = bin(int.from_bytes(hash_bytes, 'big'))[2:]  # [2:] to remove '0b' prefix
+        
+        # Pad with leading zeros to ensure full 256 bits
+        binary_hash = binary_hash.zfill(256)
+        
+        # Check if we have at least k trailing zeros
+        if binary_hash[-k:] == '0' * k:
+            return nonce_bytes
+        
+        # Increment nonce for next attempt
+        nonce += 1
 
-    assert isinstance(nonce, bytes), 'nonce should be of type bytes'
-    return nonce
+        # Safety check to prevent infinite loops (though unlikely with reasonable k)
+        if nonce > 2**(k+10):  # Arbitrary large number based on difficulty
+            print("Warning: Could not find valid nonce after many attempts")
+            return b'\x00'
+
+    #assert isinstance(nonce, bytes), 'nonce should be of type bytes'
+    #return nonce
 
 
 def get_random_lines(filename, quantity):
