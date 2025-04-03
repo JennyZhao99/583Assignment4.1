@@ -24,11 +24,11 @@ def mine_block(k, prev_hash, transactions):
     for tx in transactions:
         data += tx.encode('utf-8')
     
-    # Start with nonce = 0 and increment until it find a valid one
+    # Start with nonce = 0 and increment until it finds a valid one
     nonce = 0
     while True:
         # Convert nonce to bytes (little endian)
-        nonce_bytes = nonce.to_bytes((nonce.bit_length() + 7) // 8, 'little') or b'\x00'
+        nonce_bytes = nonce.to_bytes((nonce.bit_length() + 7) // 8) or b'\x00'
         
         # Compute the hash
         h = hashlib.sha256(data + nonce_bytes)
